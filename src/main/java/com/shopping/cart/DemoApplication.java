@@ -14,14 +14,15 @@ public class DemoApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(DemoApplication.class, args);
 	}
-	
 
 	@Bean
-    CommandLineRunner runner(ProductService productService) {
-        return args -> {
-            productService.addProduct(new Product(1L, "Apple", 10));
-            productService.addProduct(new Product(2L, "Orange", 5));
-        };
-    }
+	CommandLineRunner runner(ProductService productService) {
+		return args -> {
+			productService.addProduct(new Product(1L, "Apple", 10));
+			productService.addProduct(new Product(2L, "Orange", 20));
+			productService.addProduct(new Product(3L, "Cherry", 30));
+			productService.addProduct(new Product(4L, "Mango", 40));
+		};
+	}
 
 }

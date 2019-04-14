@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.shopping.cart.exception.OrderQuantityExceededException;
 import com.shopping.cart.model.Product;
 import com.shopping.cart.model.Quantity;
 import com.shopping.cart.service.ProductService;
@@ -65,6 +66,8 @@ public class ShoppingCartController {
 		try {
 			productService.checkoutProduct(id, quantity);
 			return new ResponseEntity("Product ordered successfully", HttpStatus.OK);
+		} catch(OrderQuantityExceededException e) {
+			return new ResponseEntity("Ordered product quantity exceeds current product inventory count", HttpStatus.BAD_REQUEST);
 		} catch (Exception e) {
 			logger.error("Quantity exceeded");
 		}

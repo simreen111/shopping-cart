@@ -61,7 +61,7 @@ public class ProductService {
 			}
 			productRepository.save(newProduct);
 		} else {
-			new NullPointerException("Null product passed. Please add a valid product");
+			throw new NullPointerException("Null product passed. Please add a valid product");
 		}
 
 	}
@@ -76,7 +76,7 @@ public class ProductService {
 		} else if (product.getProductCount() == 1) {
 			productRepository.delete(product);
 		} else {
-			new ResourceNotFoundException("No Product found to delete");
+			throw new ResourceNotFoundException("No Product found to delete");
 		}
 	}
 
@@ -87,9 +87,8 @@ public class ProductService {
 		if(quantity.getQuantity() <= product.getProductCount()) {
 			product.setProductCount(product.getProductCount() - quantity.getQuantity());
 			productRepository.save(product);
-		}
-		else {
-			new OrderQuantityExceededException("Specified quantity of " + product.getProductName() + " is not available in inventory. Currently, only " + product.getProductCount() + " " + product.getProductName() + " are available.");
+		} else {
+			throw new OrderQuantityExceededException("Specified quantity of " + product.getProductName() + " is not available in inventory. Currently, only " + product.getProductCount() + " " + product.getProductName() + " are available.");
 		}
 	}
 
