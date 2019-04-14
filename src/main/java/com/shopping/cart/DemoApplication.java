@@ -19,8 +19,8 @@ public class DemoApplication {
 	@Bean
     CommandLineRunner runner(ProductService productService) {
         return args -> {
-            productService.addProduct(new Product(1L, "Pen", 1));
-            productService.addProduct(new Product(2L, "Book", 2));
+            productService.addProduct(new Product(1L, "Apple", 10));
+            productService.addProduct(new Product(2L, "Orange", 5));
         };
     }
 

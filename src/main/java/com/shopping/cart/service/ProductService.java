@@ -7,8 +7,10 @@ import javax.transaction.Transactional;
 
 import org.springframework.stereotype.Service;
 
+import com.shopping.cart.exception.OrderQuantityExceededException;
 import com.shopping.cart.exception.ResourceNotFoundException;
 import com.shopping.cart.model.Product;
+import com.shopping.cart.model.Quantity;
 import com.shopping.cart.repository.ProductRepository;
 
 @Service
@@ -21,12 +23,24 @@ public class ProductService {
 	}
 
 	public Iterable<Product> getProductList() {
-		return productRepository.findAll();
+		Iterable <Product> list = productRepository.findAll();
+		Iterator<Product> iter = list.iterator();
+		while (iter.hasNext()) {
+			if(iter.next().getProductCount() <= 0) {
+				iter.remove();
+			}
+		}
+		return list;
 	}
 
 	public Product getProduct(long id) {
 		// TODO Auto-generated method stub
-		return productRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Product not found"));
+		Product product = productRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Product not found"));
+		if(product.getProductCount() <= 0) {
+			productRepository.delete(product);
+			throw new ResourceNotFoundException("Product out of stock");
+		}
+		return product;
 	}
 
 	public void addProduct(Product newProduct) {
@@ -64,7 +78,19 @@ public class ProductService {
 		} else {
 			new ResourceNotFoundException("No Product found to delete");
 		}
+	}
 
+	public void checkoutProduct(long id, Quantity quantity) {
+		// TODO Auto-generated method stub
+		Product product = getProduct(id);
+		
+		if(quantity.getQuantity() <= product.getProductCount()) {
+			product.setProductCount(product.getProductCount() - quantity.getQuantity());
+			productRepository.save(product);
+		}
+		else {
+			new OrderQuantityExceededException("Specified quantity of " + product.getProductName() + " is not available in inventory. Currently, only " + product.getProductCount() + " " + product.getProductName() + " are available.");
+		}
 	}
 
 }
